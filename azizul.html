@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Voice Generator</title>
+<style>
+  body {
+    background: #0e0e0e;
+    color: #00ffcc;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    padding: 20px;
+  }
+  textarea {
+    width: 90%;
+    height: 150px;
+    background: #1c1c1c;
+    color: #00ffcc;
+    border: 2px solid #00ffcc;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 16px;
+  }
+  select, input, button {
+    margin: 8px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+  }
+  button {
+    background: #00ffcc;
+    color: #000;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover {
+    background: #00ffaa;
+  }
+</style>
+</head>
+<body>
+
+<h1>🎧 AI Voice Generator</h1>
+
+<textarea id="text" placeholder="Type or paste your text here..."></textarea><br>
+
+<label>Voice:</label>
+<select id="voiceSelect"></select><br>
+
+<label>Speed:</label>
+<input type="range" id="speed" min="0.5" max="2" value="1" step="0.1">
+
+<div>
+  <button onclick="speakText()">▶ Speak</button>
+  <button onclick="pauseVoice()">⏸ Pause</button>
+  <button onclick="resumeVoice()">▶ Resume</button>
+  <button onclick="stopVoice()">⏹ Stop</button>
+</div>
+
+<script>
+let voices = [];
+
+function loadVoices() {
+  voices = speechSynthesis.getVoices();
+  const voiceSelect = document.getElementById("voiceSelect");
+  voiceSelect.innerHTML = "";
+  voices.forEach((voice, i) => {
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = `${voice.name} (${voice.lang})`;
+    voiceSelect.appendChild(option);
+  });
+}
+
+if ('speechSynthesis' in window) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+let isSpeaking = false;
+let currentUtterance;
+
+function speakText() {
+  const text = document.getElementById("text").value.trim();
+  const speed = document.getElementById("speed").value;
+  const voiceIndex = document.getElementById("voiceSelect").value;
+
+  if (!text) return alert("Please enter some text!");
+
+  if (isSpeaking) {
+    speechSynthesis.cancel();
+    isSpeaking = false;
+  }
+
+  const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [text];
+
+  function speakSentence(index) {
+    if (index >= sentences.length) return;
+    currentUtterance = new SpeechSynthesisUtterance(sentences[index]);
+    currentUtterance.voice = voices[voiceIndex];
+    currentUtterance.rate = speed;
+    currentUtterance.onend = () => speakSentence(index + 1);
+    speechSynthesis.speak(currentUtterance);
+  }
+
+  speakSentence(0);
+  isSpeaking = true;
+}
+
+function pauseVoice() {
+  speechSynthesis.pause();
+}
+
+function resumeVoice() {
+  speechSynthesis.resume();
+}
+
+function stopVoice() {
+  speechSynthesis.cancel();
+  isSpeaking = false;
+}
+</script>
+
+</body>
+</html>

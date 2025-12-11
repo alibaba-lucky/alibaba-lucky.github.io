@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Header with Hamburger + Search</title>
+  <style>
+    :root{
+      --bg:#fff;
+      --accent:#e83e8c;
+      --text:#222;
+      --nav-bg:#ffffff;
+      --shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "SolaimanLipi", sans-serif;
+      color:var(--text);
+      background:var(--bg);
+    }
+
+    /* Header */
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      background:var(--nav-bg);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 14px;
+      gap:12px;
+      box-shadow:var(--shadow);
+    }
+
+    .left, .center, .right { display:flex; align-items:center; gap:10px; }
+    .left, .right { min-width:44px; }
+
+    /* hamburger button */
+    .btn{
+      background:transparent;
+      border:0;
+      padding:8px;
+      border-radius:8px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+    .btn:focus{outline:2px solid rgba(0,0,0,0.08);}
+
+    .logo{
+      font-weight:700;
+      font-size:20px;
+      color:var(--accent);
+      text-align:center;
+    }
+
+    /* search input area (hidden by default on small screens) */
+    .search-bar{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%) translateY(-10px);
+      top:70px;
+      width:calc(100% - 40px);
+      max-width:820px;
+      transition:all .22s ease;
+      opacity:0;
+      pointer-events:none;
+      background: #fff;
+      padding:8px;
+      border-radius:10px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+      z-index:999;
+    }
+    .search-bar.open{
+      transform:translateX(-50%) translateY(0);
+      opacity:1;
+      pointer-events:auto;
+    }
+    .search-bar input{
+      width:100%;
+      border:1px solid #e8e8e8;
+      padding:10px 12px;
+      border-radius:8px;
+      font-size:16px;
+    }
+
+    /* side nav (drawer) */
+    .drawer{
+      position:fixed;
+      left:0;
+      top:0;
+      height:100vh;
+      width:280px;
+      background:#fff;
+      transform:translateX(-100%);
+      box-shadow: 8px 0 30px rgba(0,0,0,0.12);
+      transition:transform .25s ease;
+      z-index:1100;
+      padding:20px;
+    }
+    .drawer.open{ transform:translateX(0); }
+
+    .drawer nav a{
+      display:block;
+      padding:12px 8px;
+      border-radius:6px;
+      color:var(--text);
+      text-decoration:none;
+    }
+    .drawer nav a:hover{ background: #f4f4f4; }
+
+    /* overlay behind drawer */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.36);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease;
+      z-index:1050;
+    }
+    .overlay.show{ opacity:1; pointer-events:auto; }
+
+    /* larger screens: show nav inline */
+    @media(min-width:900px){
+      .left .btn { display:none; } /* hide hamburger on desktop */
+      .center{ justify-content:flex-start; gap:18px; }
+      .site-header{ padding:12px 28px; }
+      .center .logo { margin-right:8px; }
+      .nav-inline{
+        display:flex;
+        gap:12px;
+      }
+      .nav-inline a{
+        text-decoration:none;
+        color:var(--text);
+        padding:8px 10px;
+        border-radius:8px;
+      }
+      .nav-inline a:hover{ background:#f4f4f4; }
+      .drawer{ display:none; }
+      .search-bar{
+        position:static;
+        transform:none;
+        opacity:1;
+        pointer-events:auto;
+        width:auto;
+        max-width:none;
+        box-shadow:none;
+        background:transparent;
+        padding:0;
+      }
+      .search-bar input{
+        width:220px;
+        border:1px solid #e8e8e8;
+        padding:8px 10px;
+      }
+    }
+
+    /* small styling for demo content */
+    main{ padding:18px; max-width:920px; margin:18px auto; }
+    .btn-icon{ width:28px;height:28px; display:inline-grid; place-items:center; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header" role="banner">
+    <div class="left">
+      <!-- Hamburger -->
+      <button class="btn" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+        <!-- simple hamburger svg -->
+        <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true" width="22" height="22">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="center" style="flex:1; justify-content:center;">
+      <div class="logo">কোর্সটিকা</div>
+
+      <!-- inline nav for larger screens -->
+      <nav class="nav-inline" aria-label="Primary" style="display:none;">
+        <a href="#">হোম</a>
+        <a href="#">কোর্স</a>
+        <a href="#">ব্লগ</a>
+        <a href="#">যোগাযোগ</a>
+      </nav>
+    </div>
+
+    <div class="right">
+      <!-- Search icon -->
+      <button class="btn" id="searchBtn" aria-label="Search" aria-expanded="false" aria-controls="searchBar">
+        <svg class="btn-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" stroke="#111" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- search area -->
+  <div class="search-bar" id="searchBar" role="search" aria-hidden="true">
+    <input id="searchInput" placeholder="Search..." aria-label="Search input">
+  </div>
+
+  <!-- drawer -->
+  <aside id="drawer" class="drawer" role="navigation" aria-hidden="true">
+    <button class="btn" id="closeDrawer" aria-label="Close menu" style="margin-bottom:8px;">
+      ✕
+    </button>
+    <nav>
+      <a href="#">হোম</a>
+      <a href="#">একাডেমি</a>
+      <a href="#">প্রশিক্ষণ</a>
+      <a href="#">ব্লগ</a>
+      <a href="#">যোগাযোগ</a>
+    </nav>
+  </aside>
+
+  <div class="overlay" id="overlay" tabindex="-1"></div>
+
+  <main>
+    <h1>ডেমো কন্টেন্ট</h1>
+    <p>এখানে আপনার ওয়েবসাইটের কনটেন্ট থাকবে। মোবাইলে হেডারে বাম পাশে হ্যামবার্গার এবং ডান পাশের সার্চ আইকন কাজ করবে। ডেক্সটপে হ্যামবার্গার অটোমেটিকলি লুকাবে এবং নেভবার ইনলাইন দেখাবে (media query দ্বারা)।</p>
+    <p>অনেকসময় আপনি Font Awesome বা অন্য আইকন লাইব্রেরি ব্যবহার করতে পারবেন; এখানে আমি SVG দিয়েছি যাতে একেবারে standalone কাজ করে।</p>
+  </main>
+
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('overlay');
+    const closeDrawer = document.getElementById('closeDrawer');
+
+    const searchBtn = document.getElementById('searchBtn');
+    const searchBar = document.getElementById('searchBar');
+    const searchInput = document.getElementById('searchInput');
+
+    // open drawer
+    function openDrawer(){
+      drawer.classList.add('open');
+      overlay.classList.add('show');
+      drawer.setAttribute('aria-hidden','false');
+      hamburger.setAttribute('aria-expanded','true');
+    }
+    function closeDrawerFn(){
+      drawer.classList.remove('open');
+      overlay.classList.remove('show');
+      drawer.setAttribute('aria-hidden','true');
+      hamburger.setAttribute('aria-expanded','false');
+    }
+
+    hamburger.addEventListener('click', () => {
+      const open = drawer.classList.contains('open');
+      if(open) closeDrawerFn(); else openDrawer();
+    });
+    closeDrawer.addEventListener('click', closeDrawerFn);
+    overlay.addEventListener('click', () => {
+      closeDrawerFn();
+      closeSearch();
+    });
+
+    // search toggle
+    function openSearch(){
+      searchBar.classList.add('open');
+      searchBar.setAttribute('aria-hidden','false');
+      searchBtn.setAttribute('aria-expanded','true');
+      setTimeout(()=>searchInput.focus(),100);
+    }
+    function closeSearch(){
+      searchBar.classList.remove('open');
+      searchBar.setAttribute('aria-hidden','true');
+      searchBtn.setAttribute('aria-expanded','false');
+    }
+
+    searchBtn.addEventListener('click', () => {
+      const isOpen = searchBar.classList.contains('open');
+      if(isOpen) closeSearch(); else openSearch();
+    });
+
+    // close search with Esc
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape'){
+        closeSearch();
+        closeDrawerFn();
+      }
+    });
+
+    // Optional: if screenWidth >= 900, hide hamburger (CSS handles) but ensure aria states reset
+    window.matchMedia('(min-width:900px)').addEventListener('change',(ev)=>{
+      if(ev.matches){
+        closeDrawerFn();
+        openSearch(); // desktop shows search inline
+      } else {
+        closeSearch();
+      }
+    });
+  </script>
+
+</body>
+</html>

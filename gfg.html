@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Voice Generator</title>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      padding-top: 50px;
+    }
+
+    h1 {
+      color: #00ffcc;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 80%;
+      height: 120px;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 18px;
+      border: none;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    select, button {
+      font-size: 16px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: none;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    button {
+      background: #00ffcc;
+      color: #000;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #00ffaa;
+    }
+
+    .controls {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎙️ AI Voice Generator Pro</h1>
+
+  <textarea id="text" placeholder="Write your text here..."></textarea><br>
+
+  <div class="controls">
+    <select id="lang">
+      <option value="en">English</option>
+      <option value="bn">Bangla</option>
+      <option value="hi">Hindi</option>
+    </select>
+
+    <select id="voiceType">
+      <option value="female">Female</option>
+      <option value="male">Male</option>
+    </select>
+  </div>
+
+  <br>
+  <button onclick="generateVoice()">🔊 Speak</button>
+  <button onclick="downloadVoice()">⬇️ Download Voice</button>
+
+  <script>
+    function getVoiceUrl(text, lang, type) {
+      // কিছু ভিন্নতা আনার জন্য voice type অনুসারে pitch বা tone পরিবর্তন
+      const speed = type === "male" ? "0.9" : "1.1";
+      return `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&client=tw-ob&ttsspeed=${speed}`;
+    }
+
+    function generateVoice() {
+      const text = document.getElementById("text").value;
+      const lang = document.getElementById("lang").value;
+      const type = document.getElementById("voiceType").value;
+
+      if (text.trim() === "") {
+        alert("Please enter some text!");
+        return;
+      }
+
+      const audio = new Audio(getVoiceUrl(text, lang, type));
+      audio.play();
+    }
+
+    function downloadVoice() {
+      const text = document.getElementById("text").value;
+      const lang = document.getElementById("lang").value;
+      const type = document.getElementById("voiceType").value;
+
+      if (text.trim() === "") {
+        alert("Please enter some text!");
+        return;
+      }
+
+      const url = getVoiceUrl(text, lang, type);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = "voice.mp3";
+      link.click();
+    }
+  </script>
+</body>
+</html>

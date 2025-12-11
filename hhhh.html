@@ -1,0 +1,34 @@
+<html>
+<head>
+  <title> azizul creation</title>
+  <style>
+  body{
+    background-color: gray;
+    box-align: center;
+    color: white;
+    font-family: solaimanLipi;
+    font-size: 18px;
+  }
+  
+ . box{
+   text-align: center;
+   background-color:blue;
+ }
+    </style>
+</head>
+<body>
+  <a id="time">00:00:00</a>
+  <script>
+  function timeShow(){
+    const now = new Date();
+    let hours = now.getHours().toString().padStart(2, "0");
+    let minutes = now.getMinutes().toString().padStart(2, "0");
+    let seconds = now.getSeconds().toString().padStart(2, "0");
+    document.getElementById("time").innerText=`${hours}:${minutes}:${seconds}`
+  }
+  setInterval(timeShow, 1000)
+  timeShow()
+    
+  </script>
+</body>
+</html>

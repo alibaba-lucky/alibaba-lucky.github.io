@@ -1,0 +1,26 @@
+import { useState } from "react";
+
+function LessonCard({ title, description }) {
+  return (
+    <div style={{ border: "1px solid #ddd", padding: 12, borderRadius: 8 }}>
+      <h3>{title}</h3>
+      <p>{description}</p>
+    </div>
+  );
+}
+
+export default function App() {
+  const [lessons] = useState([
+    { id: 1, title: "Pahela Boishakh", description: "Lesson summary..." },
+    { id: 2, title: "They Had Dreams", description: "Lesson summary..." }
+  ]);
+
+  return (
+    <div style={{ maxWidth: 720, margin: "20px auto", fontFamily: "sans-serif" }}>
+      <h1>Grade English Pro — Lessons</h1>
+      <div style={{ display: "grid", gap: 12 }}>
+        {lessons.map(l => <LessonCard key={l.id} title={l.title} description={l.description} />)}
+      </div>
+    </div>
+  );
+}
